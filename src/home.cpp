@@ -10,6 +10,7 @@ void drawHomeUI(GxEPD_Class *display, ESP32Time *rtc, int batteryStatus) {
   display->fillRect(0, 0, GxEPD_WIDTH, GxEPD_HEIGHT, GxEPD_WHITE);
   display->setTextColor(GxEPD_BLACK);
   display->setTextWrap(false);
+  display->setRotation(2); // Rotate the display 90 degrees clockwise
 
   // Define the square clock face
   int centerX = GxEPD_WIDTH / 2;  // Center of the screen
@@ -32,13 +33,13 @@ void drawHomeUI(GxEPD_Class *display, ESP32Time *rtc, int batteryStatus) {
   }
 // Add "ROLEX" text above the center point
 display->setFont(&Outfit_60011pt7b); // Set font for "ROLEX"
-display->setCursor(centerX - 30, centerY - 40); // Adjust position for "ROLEX"
+display->setCursor(centerX - 35, centerY - 25); // Adjust position for "ROLEX"
 display->print("ROLEX");
 
 // Draw the Rolex crown logo above the "ROLEX" text
 // Assuming you have a bitmap for the crown logo named `rolex_crown_bitmap`
-// and its dimensions are 20x20 pixels
-display->drawBitmap(centerX - 10, centerY - 60, rolex_crown_bitmap, 20, 20, GxEPD_BLACK);
+// and its dimensions are 28x28 pixels
+display->drawBitmap(centerX - 15, centerY - 75, rolex_crown_bitmap, 35, 35, GxEPD_BLACK);
 
   // Get the current time
   int hours = rtc->getHour(true); // 24-hour format
@@ -56,18 +57,36 @@ display->drawBitmap(centerX - 10, centerY - 60, rolex_crown_bitmap, 20, 20, GxEP
   float minuteRad = radians(minuteAngle - 90);
 
   // Calculate hand positions
-  int hourX = centerX + cos(hourRad) * (halfSide * 0.5); // Hour hand is shorter
-  int hourY = centerY + sin(hourRad) * (halfSide * 0.5);
+  int hourX = centerX + cos(hourRad) * (halfSide * 0.7); // Hour hand is shorter
+  int hourY = centerY + sin(hourRad) * (halfSide * 0.7);
 
-  int minuteX = centerX + cos(minuteRad) * (halfSide * 0.8); // Minute hand is longer
-  int minuteY = centerY + sin(minuteRad) * (halfSide * 0.8);
+  int minuteX = centerX + cos(minuteRad) * (halfSide * 1.1); // Minute hand is longer
+  int minuteY = centerY + sin(minuteRad) * (halfSide * 1.1);
 
-  // Draw the hands
-  display->drawLine(centerX, centerY, hourX, hourY, GxEPD_BLACK);   // Hour hand
-  display->drawLine(centerX, centerY, minuteX, minuteY, GxEPD_BLACK); // Minute hand
+  // Draw the hands as lines
+  // display->drawLine(centerX, centerY, hourX, hourY, GxEPD_BLACK);   // Hour hand
+  // display->drawLine(centerX, centerY, minuteX, minuteY, GxEPD_BLACK); // Minute hand
+
+// Draw the hour hand as a filled triangle
+display->fillTriangle(
+    centerX + sin(hourRad) * 3, centerY - cos(hourRad) * 3, // Perpendicular outward for one side of the base
+    hourX, hourY,                                           // Tip of the hour hand
+    centerX - sin(hourRad) * 3, centerY + cos(hourRad) * 3, // Perpendicular inward for the other side of the base
+    GxEPD_BLACK
+);
+
+// Draw the minute hand as a filled triangle
+display->fillTriangle(
+    centerX + sin(minuteRad) * 3, centerY - cos(minuteRad) * 3, // Perpendicular outward for one side of the base
+    minuteX, minuteY,                                           // Tip of the minute hand
+    centerX - sin(minuteRad) * 3, centerY + cos(minuteRad) * 3, // Perpendicular inward for the other side of the base
+    GxEPD_BLACK
+);
 
   // Draw the center point
-  display->fillCircle(centerX, centerY, 2, GxEPD_BLACK);
+  display->fillCircle(centerX, centerY, 4.5, GxEPD_BLACK);
+
+  //battery icon changing depending on the battery status
   const unsigned char *icon_battery_small_array[6] = {epd_bitmap_icon_battery_0_small,  epd_bitmap_icon_battery_20_small,
     epd_bitmap_icon_battery_40_small, epd_bitmap_icon_battery_60_small,
     epd_bitmap_icon_battery_80_small, epd_bitmap_icon_battery_100_small};
@@ -84,7 +103,7 @@ void disableWifiDisplay(GxEPD_Class *display) { display->drawBitmap(GxEPD_WIDTH 
 /**
  * Add the wifi - is active - icon to the display
  */
-void enableWifiDisplay(GxEPD_Class *display) { display->drawBitmap(2, 24, icon_wifi_small, 28, 28, GxEPD_BLACK); }
+void enableWifiDisplay(GxEPD_Class *display) { display->drawBitmap(2, 3, icon_wifi_small, 28, 28, GxEPD_BLACK); }
 
 /**
  * Display the weather condition and temp
@@ -121,7 +140,7 @@ void displayFocusTime(GxEPD_Class *display, int focusTime) {
     String timeStr = hoursFiller + String(focusTime) + ":00";
     printLeftString(display, timeStr.c_str(), 4, 22);
   } else {
-    String a = "--:--";
+    String a = "";
     printLeftString(display, a.c_str(), 4, 22);
   }
 }
