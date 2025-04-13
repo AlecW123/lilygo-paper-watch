@@ -31,8 +31,8 @@
 
 // Allow the setting of your WiFi credentials
 // If these values are not set the WiFi will be disabled giving longer battery life
-#define WIFI_SSID              ""
-#define WIFI_PASSWD            ""
+#define WIFI_SSID              "PLUSNET-MJC36Q"
+#define WIFI_PASSWD            "4arNEymNk4hUrg"
 
 // Set your API Key according to https://openweathermap.org/api
 // Add the weather API key
