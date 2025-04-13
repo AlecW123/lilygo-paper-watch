@@ -6,7 +6,7 @@
 #include "GxEPD.h"
 
 #include "lib/ui.h"
-
+#include "resources/fonts/FreeSerifBold12pt7b.h"
 #include "resources/fonts/Outfit_60011pt7b.h"
 #include "resources/fonts/Outfit_80036pt7b.h"
 #include "resources/icons.h"

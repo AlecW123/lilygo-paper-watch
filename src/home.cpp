@@ -21,16 +21,18 @@ void drawHomeUI(GxEPD_Class *display, ESP32Time *rtc, int batteryStatus) {
   // Draw the square clock face
  // display->drawRect(centerX - halfSide, centerY - halfSide, sideLength, sideLength, GxEPD_BLACK);
 
-  // Draw numbers 1 to 12 around the edges of the square
-  const int numberOffset = 10; // Offset for numbers from the edges
-  display->setFont(&Outfit_60011pt7b); // Set font for numbers
+ const int numberOffset = 10; // Offset for numbers from the edges
+  display->setFont(&FreeSerifBold12pt7b); // Set font for numbers
   for (int i = 1; i <= 12; i++) {
     float angle = radians((i - 3) * 30); // Calculate angle for each number
     int numberX = centerX + cos(angle) * (halfSide + numberOffset);
     int numberY = centerY + sin(angle) * (halfSide + numberOffset);
-    display->setCursor(numberX - 5, numberY + 5); // Adjust position for centering
+    // Adjust cursor for multi-digit numbers
+    int textOffset = (i >= 10) ? 8 : 5; // Adjust offset for 2-digit numbers
+    display->setCursor(numberX - textOffset, numberY + 4); // Adjust position for centering
     display->print(i);
-  }
+}
+
 // Add "ROLEX" text above the center point
 display->setFont(&Outfit_60011pt7b); // Set font for "ROLEX"
 display->setCursor(centerX - 35, centerY - 25); // Adjust position for "ROLEX"
@@ -60,8 +62,8 @@ display->drawBitmap(centerX - 15, centerY - 75, rolex_crown_bitmap, 35, 35, GxEP
   int hourX = centerX + cos(hourRad) * (halfSide * 0.7); // Hour hand is shorter
   int hourY = centerY + sin(hourRad) * (halfSide * 0.7);
 
-  int minuteX = centerX + cos(minuteRad) * (halfSide * 1.1); // Minute hand is longer
-  int minuteY = centerY + sin(minuteRad) * (halfSide * 1.1);
+  int minuteX = centerX + cos(minuteRad) * (halfSide * 1); // Minute hand is longer
+  int minuteY = centerY + sin(minuteRad) * (halfSide * 1);
 
   // Draw the hands as lines
   // display->drawLine(centerX, centerY, hourX, hourY, GxEPD_BLACK);   // Hour hand
